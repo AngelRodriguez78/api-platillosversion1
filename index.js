@@ -1,68 +1,87 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
-const cors =require('cors');
+const cors = require('cors');
 const app = express();
 
 
 app.use(cors());
 app.use(express.json());
 
-//mini base de datos de platillo
 
-let platillos = [
-    {
-        "id":1,
-        "nombre": "Tacos al pastor",
-        "precio":10,
-        "descripcion": "Ricos tacos al pastor",
-    },
-    {
-        "id":2,
-        "nombre": "Chilakiles",
-        "precio":45.15,
-        "descripcion": "Ricos Chilakiles",
-    },
-    {
-        "id":3,
-        "nombre": "Arepa",
-        "precio":25,
-        "descripcion": "Rica Arepa",
-    },
-    {
-        "id":4,
-        "nombre": "Bandeja Paisa",
-        "precio":80,
-        "descripcion": "Comida Colombiana",
-    },
-    {
-        "id" : 5,
-        "nombre": "Flautas",
-        "precio":15,
-        "descripcion": "Tortillas con carne o pollo",
-    }
+//minibase de datos de platillos
+
+let platillos = [{
+    "id": 1,
+    "nombre": "Tacos al pastor",
+    "precio": 10,
+    "descripcion": "Ricos tacos al pastor"
+},
+{
+    "id": 2,
+    "nombre": "Gordita de chicharron",
+    "precio": 15,
+    "descripcion": "Rica gordita"
+},
+{
+    "id": 3,
+    "nombre": "Arepa",
+    "precio": 10,
+    "descripcion": "Rica arepa"
+},
+{
+    "id": 4,
+    "nombre": "Bandeja Paisa",
+    "precio": 10,
+    "descripcion": "Rica comida colombiana con frijoles, huevo y arroz"
+},
+{
+    "id": 5,
+    "nombre": "Pozole",
+    "precio": 10,
+    "descripcion": "Platillo mexicano tipico caldo con ganzanzos y carne"
+}
 ];
 
-
-app.get("/",(req, res)=> {
+app.get("/", (req, res)=> {
     res.json("API Platillos V1.0")
 });
 
-app.get("/platillos",(req, res)=> {
+app.get("/platillos",(req, res)=>{
     res.json({
-        message: "respuesta correcta de platillos",
+        message: "Respuesta correcta de platillos",
         data: platillos
     })
 });
 
-app.post("/platillos",(req, res)=> {
+app.post("/platillos",(req, res)=>{
     let platillo = req.body;
     platillos.push(platillo);
     res.json({
-        message: "el platillos de agrego correctamente",
+        message: "El platillo se agrego correctamente",
         data: platillo
     })
 });
 
+app.delete("/platillos/:id",(req, res)=>{
+    const id = parseInt(req.params.id);
+    const indice = platillos.findIndex(platillo => {return platillo.id === id});
+    // el -1 es porque findIndex cuando no ecuentra conicidencias regresa -1
+    if (indice !== -1) {
+        platillos.splice(indice, 1);
+        res.json({
+            message: "El platillo se elimino",
+            data: null
+        })
+    } else {
+        res.json({
+            message: "El id enviado no pertenece a un platillo",
+            data: null
+        })
+    }
+
+});
+
+
 app.listen(process.env.PORT, ()=>{
-    console.log("Servidor iniciado en el puerto " + process.env.PORT);
+    console.log("Servidor iniciado en el puerto: "+ process.env.PORT);
 });
